@@ -11,29 +11,30 @@ class Scheduler {
 
     public Scheduler(List<Process> processes) { //constructor
         this.processes = new ArrayList<>(processes);
-        ganttChart.append("Time\t\tProcess/CS/Idle\n");
+        ganttChart.append("Time\t\tProcess/CS\n");
         QueueSize = processes.size();
     }
 
     public void execute() {
         Process lastProcess = null; // keeps track of previous process for CS detection
+        int intervalStart=0;    // a helper variable for printing time intervals
 
+        
         while ( processes.size() != 0 ) {//loops until all processes complete 
-
+        	
             Process shortest = findShortestRemainingProcess();//retrieve prioritized process
-
-            if (shortest == null) { //no process arrived  
-                ganttChart.append(currentTime).append("\t\tIdle\n");
-                idleTime++;
-            } else {
-                if (lastProcess != null && lastProcess != shortest) { //new process in
-                    ganttChart.append(currentTime).append("\t\tCS\n");//context switch
-                    currentTime++; 
-                    idleTime++;
+            	
+                if (lastProcess != null && lastProcess != shortest) { //new process in (context switching)
+                	
+                	//store the time interval for both finished process burst and context switch
+                	ganttChart.append(intervalStart + "-" + currentTime ).append("\t\tP").append(lastProcess.pid).append("\n");
+                    ganttChart.append(currentTime + "-" + ( currentTime+1) ).append("\t\tCS\n");
+                    currentTime++; //increment 1ms for CS
+                    idleTime++; //increment idle time
+                    intervalStart = currentTime; //update intervalStartTime for the next process
                 }
-
-                ganttChart.append(currentTime).append("\t\tP").append(shortest.pid).append("\n");
-                shortest.remainingTime--;
+            	
+                shortest.remainingTime--; //decrement current process remaining time
                 
                 if (shortest.remainingTime == 0) { //when process is completed
                     shortest.completionTime = currentTime + 1;
@@ -46,19 +47,21 @@ class Scheduler {
                     processes.remove(shortest);//remove it from queue
                 }
 
-                lastProcess = shortest;
-            }
-
-            currentTime++; 
+            lastProcess = shortest; //stores current process for the next iteration needs
+            currentTime++; //current time will increment in every iteration 
         }
+        
+        if (lastProcess != null)  //appends the last process interval to be printed
+            ganttChart.append(intervalStart + "-" + currentTime).append("\t\tP").append(lastProcess.pid).append("\n");
+          
     }
 
     private Process findShortestRemainingProcess() { //method to pick a process with the highest priority(lowest remaining burst time)
         Process shortest = null;
         for (Process p : processes) { //for each process
-            if (p.arrival <= currentTime) {// it has arrived already
-            	if (shortest == null || p.remainingTime <= shortest.remainingTime ||//pick the shortest of them all
-            	(p.remainingTime == shortest.remainingTime && p.arrival < shortest.arrival))//handle FCFS case
+            if (p.arrival <= currentTime) {// that has arrived already
+            	if (shortest == null || p.remainingTime < shortest.remainingTime ||//pick the shortest of them all
+            	(p.remainingTime == shortest.remainingTime && p.arrival < shortest.arrival))//handle FCFS case (equal bursts case)
                     shortest = p;     
             }
         }
