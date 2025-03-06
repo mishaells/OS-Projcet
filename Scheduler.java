@@ -69,7 +69,8 @@ class Scheduler {
     }
 
     public void printReport() {
-        System.out.println("Gantt Chart:");
+        System.out.println("Scheduling Algorithm: Shortest remaining time first");
+        System.out.println("Context Switch: 1ms");
         System.out.println(ganttChart);     
         System.out.println("\nPerformance Metrics:");
         System.out.println("Average Turnaround Time: " + String.format("%.2f", (double) turnaroundTimeSum / QueueSize));
