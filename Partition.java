@@ -19,27 +19,12 @@ public class Partition {
 
 
     public void calculateFragment() {
-    if (partitionStatus.equals("Allocated") && !processNum.equals("Null")) {
-        fragmentSize = partitionSize - processSize;
-    } else {
-        fragmentSize = 0; // Or -1 if you want to indicate invalid state
-    }
-}
-
-	//public void calculateFragment() {
-		int fragment = -1;
-
-		if (!processNum.equals("Null") && partitionStatus.equals("Allocated")) {
-			fragment = partition - processSize;
-			setFragmentSize(fragment);
+		if (partitionStatus.equals("Allocated") && !processNum.equals("Null")) {
+			fragmentSize = partition - processSize;
+		} else {
+			fragmentSize = -1;
 		}
-
-	//}
-
-
-	
-
-	// Setters and Getters //
+	}
 
 	public int getStartAddress() {
 		return startAddress;
@@ -65,23 +50,23 @@ public class Partition {
 		this.fragmentSize = fragmentSize;
 	}
 
-	public int getPartition() {//
+	public int getPartition() {
 		return partition;
 	}
 
-	public void setPartition(int partition) {//
+	public void setPartition(int partition) {
 		this.partition = partition;
 	}
 
-	public String getPartitionStatus() {//
+	public String getPartitionStatus() {
 		return partitionStatus;
 	}
 
-	public void setPartitionStatus(String partitionStatus) {//
+	public void setPartitionStatus(String partitionStatus) {
 		this.partitionStatus = partitionStatus;
 	}
 
-	public String getProcessNum()  {//
+	public String getProcessNum()  {
 		return processNum;
 	}
 
@@ -94,7 +79,7 @@ public class Partition {
   
 	}
 
-	public void setProcessSize(int processSize) {//
+	public void setProcessSize(int processSize) {
 		this.processSize = processSize;
 	}
 
